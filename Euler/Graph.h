@@ -29,6 +29,8 @@ private:
 	void removeEdge(list<int>* vertices, int v1, int v2);
     bool hamilton(int start, list<int> visited, int current, int* result, bool one);
 	bool euler(list<int>* vertices, int current, int*result, int* count);
+	template < typename T > 
+	void shuffle(std::list<T>& lst);
 };
 
 

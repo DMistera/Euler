@@ -13,7 +13,6 @@ using namespace std;
 void Program::start() {
 
 	int size = 3;
-	long double totalTime = 0;
 	long double elapsedTime = 0;
 	clock_t start;
 	clock_t end;
@@ -23,10 +22,13 @@ void Program::start() {
 	Writer tha[2];
 	Writer ch[2];
 
-	double long HATime = 0;
+	long double ETime = 0;
+	long double H1Time = 0;
+	long double HATime = 0;
 	bool skipHA = false;
-	while (!skipHA || (skipHA && (totalTime < 30 * 1000))) {
-		totalTime = 0;
+
+	while (!skipHA || (skipHA && (ETime < 1000))) {
+		ETime = 0;
 		for (int i = 0; i < 2; i++) {
 			float density = i == 0 ? 0.2f : 0.6f;
 			Graph graph = Graph();
@@ -37,17 +39,16 @@ void Program::start() {
 			start = clock();
 			graph.findEuler(&eulerCycle);
 			end = clock();
-			elapsedTime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
-			totalTime += elapsedTime;
-			te[i].add(size, elapsedTime);
+			ETime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+			te[i].add(size, ETime);
 
-			start = clock();
-			graph.findHamilton(&hamiltonCycle);
-			end = clock();
-			elapsedTime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
-			totalTime += elapsedTime;
-			th1[i].add(size, elapsedTime);
-
+			if (H1Time < 30 * 1000) {
+				start = clock();
+				graph.findHamilton(&hamiltonCycle);
+				end = clock();
+				H1Time = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+				th1[i].add(size, H1Time);
+			}
 
 
 			if (!skipHA) {
@@ -59,15 +60,14 @@ void Program::start() {
 				HATime = elapsedTime;
 				tha[i].add(size, elapsedTime);
 				ch[i].add(size, count);
-				if (elapsedTime > 30* 1000) {
+				if (elapsedTime > 3* 1000) {
 					skipHA = true;
 				}
 			}
 		}
 		cout << "Finished for n = " << size << endl;
-		cout << "Total time: " << totalTime + HATime << endl;
 		if (skipHA) {
-			size += 30;
+			size += 5;
 		}
 		else {
 			size++;

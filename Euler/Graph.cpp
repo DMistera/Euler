@@ -4,6 +4,12 @@
 
 #include "Graph.h"
 #include <time.h>
+#include<iostream>
+#include<algorithm>
+#include<random>
+#include<list>
+#include<vector>
+#include<chrono>
 
 Graph::Graph() {
 
@@ -57,11 +63,34 @@ void Graph::generate(int size, float density) {
 		}
 	}
 
+	//Calculate number of edges
 	int sum = 0;
 	for (int i = 0; i < size; i++) {
 		sum += vertices[i].size();
 	}
 	edgeCount = sum / 2;
+
+	//Shuffle for better result on Hamilton cycle
+	for (int i = 0; i < size; i++) {
+		shuffle(vertices[i]);
+	}
+
+}
+
+//From stackoverflow
+template < typename T > void Graph::shuffle(std::list<T>& lst) // shuffle contents of a list
+{
+	// create a vector of (wrapped) references to elements in the list
+	std::vector< std::reference_wrapper< const T > > vec(lst.begin(), lst.end());
+
+	// shuffle (the references in) the vector
+	std::shuffle(vec.begin(), vec.end(), std::mt19937{ std::random_device{}() });
+
+	// copy the shuffled sequence into a new list
+	std::list<T> shuffled_list{ vec.begin(), vec.end() };
+
+	// swap the old list with the shuffled list
+	lst.swap(shuffled_list);
 }
 
 
