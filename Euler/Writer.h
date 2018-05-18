@@ -7,8 +7,14 @@ using namespace std;
 
 class Writer {
 public:
-	Writer(string name);
+	Writer();
 	~Writer();
+	void add(int argument, long double value);
+	void write(string filename);
 private:
-	string name;
+	struct Node {
+		int argument;
+		long double value;
+	};
+	list<Node> nodes;
 };
