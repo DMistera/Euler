@@ -42,7 +42,7 @@ void Program::start() {
 			ETime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
 			te[i].add(size, ETime);
 
-			if (H1Time < 30 * 1000) {
+			if (H1Time < 5 * 1000) {
 				start = clock();
 				graph.findHamilton(&hamiltonCycle);
 				end = clock();
@@ -67,7 +67,7 @@ void Program::start() {
 		}
 		cout << "Finished for n = " << size << endl;
 		if (skipHA) {
-			size += 5;
+			size += 3;
 		}
 		else {
 			size++;
