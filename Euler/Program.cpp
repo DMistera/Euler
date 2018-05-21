@@ -7,6 +7,7 @@
 #include "Graph.h"
 #include <ctime>
 #include "Writer.h"
+#include <chrono>
 
 using namespace std;
 
@@ -14,8 +15,8 @@ void Program::start() {
 
 	int size = 3;
 	long double elapsedTime = 0;
-	clock_t start;
-	clock_t end;
+	chrono::system_clock::time_point start;
+	chrono::system_clock::time_point end;
 
 	Writer te[2];
 	Writer th1[2];
@@ -28,7 +29,7 @@ void Program::start() {
 	bool skipHA = false;
 	bool skipH1 = false;
 
-	while (ETime < 5000) {
+	while (ETime < 5000*1000) {
 		ETime = 0;
 		for (int i = 0; i < 2; i++) {
 			float density = i == 0 ? 0.2f : 0.6f;
@@ -37,19 +38,19 @@ void Program::start() {
 			int* eulerCycle;
 			int*hamiltonCycle;
 
-			start = clock();
+			start = chrono::system_clock::now();
 			graph.findEuler(&eulerCycle);
-			end = clock();
-			ETime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+			end = chrono::system_clock::now();
+			ETime = (long double)chrono::duration_cast<chrono::microseconds>(end - start).count();
 			te[i].add(size, ETime);
 
 			if (!skipH1 || i == 1) {
-				start = clock();
+				start = chrono::system_clock::now();
 				graph.findHamilton(&hamiltonCycle);
-				end = clock();
-				H1Time = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+				end = chrono::system_clock::now();
+				H1Time = (long double)chrono::duration_cast<chrono::microseconds>(end - start).count();
 				th1[i].add(size, H1Time);
-				if (H1Time > 2 * 1000 && i == 0) {
+				if (H1Time > 2 * 1000 * 1000 && i == 0) {
 					skipH1 = true;
 				}
 			}
@@ -57,14 +58,14 @@ void Program::start() {
 
 			if (!skipHA) {
 				int count = 0;
-				start = clock();
+				start = chrono::system_clock::now();
 				graph.findAllHamiltons(&count);
-				end = clock();
-				elapsedTime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+				end = chrono::system_clock::now();
+				elapsedTime = (long double)chrono::duration_cast<chrono::microseconds>(end - start).count();
 				HATime = elapsedTime;
 				tha[i].add(size, elapsedTime);
 				ch[i].add(size, count);
-				if (elapsedTime > 3* 1000) {
+				if (elapsedTime > 3* 1000 * 1000) {
 					skipHA = true;
 				}
 			}
