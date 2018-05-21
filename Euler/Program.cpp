@@ -26,8 +26,9 @@ void Program::start() {
 	long double H1Time = 0;
 	long double HATime = 0;
 	bool skipHA = false;
+	bool skipH1 = false;
 
-	while (!skipHA || (skipHA && (ETime < 1000))) {
+	while (ETime < 5000) {
 		ETime = 0;
 		for (int i = 0; i < 2; i++) {
 			float density = i == 0 ? 0.2f : 0.6f;
@@ -42,12 +43,15 @@ void Program::start() {
 			ETime = 1000.0 * (end - start) / CLOCKS_PER_SEC;
 			te[i].add(size, ETime);
 
-			if (H1Time < 5 * 1000) {
+			if (!skipH1 || i == 1) {
 				start = clock();
 				graph.findHamilton(&hamiltonCycle);
 				end = clock();
 				H1Time = 1000.0 * (end - start) / CLOCKS_PER_SEC;
 				th1[i].add(size, H1Time);
+				if (H1Time > 2 * 1000 && i == 0) {
+					skipH1 = true;
+				}
 			}
 
 
@@ -66,8 +70,11 @@ void Program::start() {
 			}
 		}
 		cout << "Finished for n = " << size << endl;
-		if (skipHA) {
-			size += 3;
+		if (skipH1) {
+			size += 20;
+		}
+		else if (skipHA) {
+			size += 2;
 		}
 		else {
 			size++;
